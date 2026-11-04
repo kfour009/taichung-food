@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TAICHUNG 美食島｜台中吃吃走走</title>
+<style>
+:root{--bg:#f6f1e7;--ink:#1d2a4a;--muted:#6b7280;--card:#fffdf8;--line:#e6dccb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 28px;border-bottom:2px solid var(--ink)}
+header h1{font-size:22px;letter-spacing:2px}header h1 small{font-size:12px;color:var(--muted);margin-left:8px;letter-spacing:1px}
+header button{border:2px solid var(--ink);background:var(--card);border-radius:999px;padding:6px 14px;font-weight:700;cursor:pointer}
+.wrap{display:grid;grid-template-columns:1fr 360px;gap:0;min-height:calc(100vh - 66px)}
+.stage{padding:24px;display:flex;flex-direction:column;align-items:center;gap:16px;overflow:hidden}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chip{border:2px solid var(--ink);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:700;cursor:pointer;background:var(--card);transition:.2s}
+.chip.on{background:var(--ink);color:#fff}
+.chip i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.map{display:flex;flex-direction:column;align-items:center;padding:20px 0}
+.row{display:flex;margin-top:-22px}.row:first-child{margin-top:0}
+.row.odd{margin-left:58px}
+.hex{width:108px;height:124px;margin:0 4px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;transition:transform .25s cubic-bezier(.3,1.6,.5,1),filter .25s,opacity .25s;padding:14px;color:var(--ink);position:relative}
+.hex:hover{transform:translateY(-8px) scale(1.06);filter:brightness(1.05) drop-shadow(0 8px 0 rgba(0,0,0,.15))}
+.hex .n{font-size:11px;font-weight:800;opacity:.7}.hex .t{font-size:13px;font-weight:800;line-height:1.25;margin-top:2px}
+.hex.dim{opacity:.18;transform:scale(.92)}.hex.sel{transform:translateY(-10px) scale(1.12);outline:none;filter:drop-shadow(0 10px 0 var(--ink))}
+.hex.ghost{visibility:hidden}
+aside{border-left:2px solid var(--ink);background:var(--card);display:flex;flex-direction:column;max-height:calc(100vh - 66px);position:sticky;top:0}
+.search{padding:14px;border-bottom:2px solid var(--line)}.search input{width:100%;padding:10px 14px;border:2px solid var(--ink);border-radius:12px;font-size:14px;background:var(--bg)}
+.list{overflow:auto;flex:1}
+.grp h3{position:sticky;top:0;background:var(--card);font-size:12px;letter-spacing:2px;padding:10px 16px;border-bottom:1px solid var(--line)}
+.item{display:flex;gap:10px;align-items:center;padding:10px 16px;cursor:pointer;border-bottom:1px dashed var(--line);font-size:14px}
+.item:hover,.item.sel{background:var(--bg)}.item b{font-size:11px;color:var(--muted);width:22px}
+.item span.dot{width:10px;height:10px;border-radius:50%;flex:none}
+.panel{position:fixed;left:50%;bottom:24px;transform:translate(-50%,160%);width:min(520px,92vw);background:var(--card);border:2px solid var(--ink);border-radius:20px;box-shadow:0 8px 0 var(--ink);padding:20px 22px;transition:transform .45s cubic-bezier(.3,1.4,.5,1);z-index:5}
+.panel.show{transform:translate(-50%,0)}
+.panel .tag{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:800;border:2px solid var(--ink)}
+.panel h2{font-size:24px;margin:10px 0 6px}.panel p{color:var(--muted);font-size:14px;line-height:1.6}
+.panel .acts{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.btn{border:2px solid var(--ink);border-radius:999px;padding:8px 14px;font-weight:800;font-size:13px;cursor:pointer;background:var(--card);color:var(--ink);text-decoration:none}
+.btn.pri{background:var(--ink);color:#fff}.x{position:absolute;right:14px;top:10px;border:none;background:none;font-size:22px;cursor:pointer;color:var(--ink)}
+.intro{position:fixed;inset:0;background:rgba(29,42,74,.55);display:flex;align-items:center;justify-content:center;z-index:9}
+.intro .box{background:var(--card);border:2px solid var(--ink);border-radius:24px;box-shadow:0 10px 0 var(--ink);padding:28px;width:min(440px,90vw)}
+.intro .step{font-size:12px;letter-spacing:3px;color:var(--muted)}.intro h2{margin:8px 0 10px;font-size:24px}.intro p{line-height:1.7;color:#374151}
+.intro .acts{display:flex;justify-content:space-between;margin-top:20px}
+.dots{display:flex;gap:6px;margin-top:16px}.dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}.dots i.on{background:var(--ink);width:22px;border-radius:4px}
+.saved{font-size:12px;margin-left:4px}
+@media(max-width:860px){.wrap{grid-template-columns:1fr}aside{border-left:none;border-top:2px solid var(--ink);max-height:none;position:static}.hex{width:76px;height:88px;padding:8px;margin:0 2px}.hex .t{font-size:11px}.row{margin-top:-16px}.row.odd{margin-left:40px}}
+</style></head><body>
+<header><h1>TAICHUNG 美食島<small>台中吃吃走走 · 34 站</small></h1><button id="help" type="button">☺ 導覽</button></header>
+<div class="wrap">
+<section class="stage"><div class="chips" id="chips"></div><div class="map" id="map"></div></section>
+<aside><div class="search"><input id="q" placeholder="🔍 搜尋店名、備註…"></div><div class="list" id="list"></div></aside>
+</div>
+<div class="panel" id="panel"><button class="x" id="close" type="button">×</button><div id="pbody"></div></div>
+<div class="intro" id="intro"><div class="box"><div class="step" id="istep"></div><h2 id="ititle"></h2><p id="itext"></p><div class="dots" id="idots"></div><div class="acts"><button class="btn" id="skip" type="button">略過</button><button class="btn pri" id="next" type="button">下一步 →</button></div></div></div>
+<script>
+const CATS={"小吃":"#ff8a65","台中特色伴手禮":"#ffd54f","台中特色食物":"#f48fb1","咖啡":"#a1887f","甜點":"#80deea","燒烤":"#ef5350","Breakfast":"#aed581"};
+const D=[["小吃","臭豆腐","空也素食、梁婆婆"],["小吃","在來碗粿米糕專門"],["小吃","老蔡上海生煎包"],["小吃","素味福州包"],["小吃","大墩11街水煎包"],["小吃","胡椒餅"],["小吃","台中肉圓"],["小吃","滷肉飯、爌肉飯","李海、莊家火雞肉飯"],["小吃","鹽酥雞"],
+["台中特色伴手禮","太陽餅"],["台中特色伴手禮","檸檬蛋糕"],["台中特色伴手禮","短腿阿鹿"],["台中特色伴手禮","玉珍齋"],["台中特色伴手禮","宮原眼科"],["台中特色伴手禮","日出土鳳梨酥"],
+["台中特色食物","麻芛湯"],["台中特色食物","麵線糊"],
+["咖啡","Coffee Stopover","台中市西區民權路217巷24號"],["咖啡","細水焙煎所"],["咖啡","ORIG BLACK"],["咖啡","The Factory Mojocoffee"],
+["甜點","春丸餐包製作所"],["甜點","卡飛娜"],["甜點","豆花、仙草","瑪露蓮、統元、馬岡、狀元"],["甜點","旅禾泡芙"],["甜點","Frigomio Gelateria 義式冰淇淋"],["甜點","柳川や"],["甜點","美玖里 (Boulangerie Mikuri)"],["甜點","麵包林里"],["甜點","堂本麵包店"],
+["燒烤","屋馬、茶六","屋馬、茶六"],
+["Breakfast","艾初早午餐－國美店","西區美村路一段606號"],["Breakfast","7分SO美式廚房"],["Breakfast","酥力蛋餅"],["Breakfast","肉蛋吐司"]].map((r,i)=>({id:i,cat:r[0],name:r[1],note:r[2]||"",no:String(i+1).padStart(2,"0")}));
+let filter=null,sel=null,saved=new Set(JSON.parse('[]'));
+const $=s=>document.querySelector(s);
+// island shape: row lengths (sum >= 34)
+const shape=[3,5,6,7,6,5,2];let k=0;
+$("#map").innerHTML=shape.map((n,r)=>`<div class="row ${r%2?'odd':''}">`+Array.from({length:n},()=>{const d=D[k++];return d?`<div class="hex" data-id="${d.id}" style="background:${CATS[d.cat]}"><span class="n">${d.no}</span><span class="t">${d.name.split(/[ (－]/)[0]}</span></div>`:`<div class="hex ghost"></div>`}).join("")+`</div>`).join("");
+$("#chips").innerHTML=`<span class="chip on" data-c="">全部</span>`+Object.keys(CATS).map(c=>`<span class="chip" data-c="${c}"><i style="background:${CATS[c]}"></i>${c}</span>`).join("")+`<span class="chip" data-c="★">★ 我的清單</span>`;
+function list(){const q=$("#q").value.trim().toLowerCase();let h="";for(const c in CATS){const it=D.filter(d=>d.cat===c&&(!q||(d.name+d.note+d.cat).toLowerCase().includes(q)));if(!it.length)continue;h+=`<div class="grp"><h3>${c} · ${it.length}</h3>`+it.map(d=>`<div class="item ${sel===d.id?'sel':''}" data-id="${d.id}"><b>${d.no}</b><span class="dot" style="background:${CATS[c]}"></span>${d.name}${saved.has(d.id)?'<span class="saved">★</span>':''}</div>`).join("")+`</div>`}$("#list").innerHTML=h||'<p style="padding:20px;color:#888">找不到相符店家</p>';}
+function paint(){const q=$("#q").value.trim().toLowerCase();document.querySelectorAll(".hex[data-id]").forEach(e=>{const d=D[e.dataset.id];const ok=(!filter||(filter==="★"?saved.has(d.id):d.cat===filter))&&(!q||(d.name+d.note).toLowerCase().includes(q));e.classList.toggle("dim",!ok);e.classList.toggle("sel",sel===d.id)});list();}
+function open(id){sel=id;const d=D[id];const m="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent("台中 "+(d.note&&d.note.includes("號")?d.note:d.name));
+$("#pbody").innerHTML=`<span class="tag" style="background:${CATS[d.cat]}">${d.no} · ${d.cat}</span><h2>${d.name}</h2><p>${d.note?"📝 "+d.note:"清單推薦店家，點地圖查看位置與營業時間。"}</p><div class="acts"><a class="btn pri" target="_blank" rel="noopener" href="${m}">📍 Google 地圖</a><button class="btn" id="sv" type="button">${saved.has(id)?"★ 已加入":"☆ 加入我的清單"}</button><button class="btn" id="nx" type="button">下一站 →</button></div>`;
+$("#panel").classList.add("show");$("#sv").onclick=()=>{saved.has(id)?saved.delete(id):saved.add(id);open(id)};$("#nx").onclick=()=>open((id+1)%D.length);paint();}
+document.addEventListener("click",e=>{const h=e.target.closest("[data-id]");if(h&&!e.target.closest("#panel"))open(+h.dataset.id);const c=e.target.closest(".chip");if(c){document.querySelectorAll(".chip").forEach(x=>x.classList.remove("on"));c.classList.add("on");filter=c.dataset.c||null;paint();}});
+$("#close").onclick=()=>{$("#panel").classList.remove("show");sel=null;paint()};$("#q").oninput=paint;
+const steps=[["HELLO, TAICHUNG / 01","每一格是一家店","34 個六邊形拼成一座美食島。點一格，或用右側清單探索店家。"],["COLOR / 02","顏色＝類別","小吃、伴手禮、咖啡、甜點、燒烤、早餐…用上方標籤篩選，其他格會淡出。"],["YOUR TRIP / 03","收藏你的行程","在店家卡片按「加入我的清單」，再點「★ 我的清單」就是你的專屬路線。"]];let s=0;
+function step(){const[a,b,c]=steps[s];$("#istep").textContent=a;$("#ititle").textContent=b;$("#itext").textContent=c;$("#idots").innerHTML=steps.map((_,i)=>`<i class="${i===s?'on':''}"></i>`).join("");$("#next").textContent=s===steps.length-1?"開始逛 ☺":"下一步 →";}
+$("#next").onclick=()=>{if(++s>=steps.length)$("#intro").style.display="none";else step()};$("#skip").onclick=()=>$("#intro").style.display="none";$("#help").onclick=()=>{s=0;step();$("#intro").style.display="flex"};
+step();paint();
+</script></body></html>
